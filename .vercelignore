@@ -1,13 +1,4 @@
-vendor 
-storage
-node_modules
-public
-resources
-bootstrap
-asset
-database
-tests
-routes
-config
-
-   
+/vendor
+/.idea
+Homestead.json
+Homestead.yaml
