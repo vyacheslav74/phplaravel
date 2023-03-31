@@ -10,11 +10,16 @@ class Kernel extends HttpKernel
      * The application's global HTTP middleware stack.
      *
      * These middleware are run during every request to your application.
-     * 
+     *
      * @var array
      */
     protected $middleware = [
-        \Illuminate\Foundation\Http\Middleware\CheckForMaintenanceMode::class,
+        \App\Http\Middleware\TrustProxies::class,
+        \Fruitcake\Cors\HandleCors::class,
+        \App\Http\Middleware\CheckForMaintenanceMode::class,
+        \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
+        \App\Http\Middleware\TrimStrings::class,
+        \Illuminate\Foundation\Http\Middleware\ConvertEmptyStringsToNull::class,
     ];
 
     /**
@@ -27,15 +32,15 @@ class Kernel extends HttpKernel
             \App\Http\Middleware\EncryptCookies::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
+            // \Illuminate\Session\Middleware\AuthenticateSession::class,
             \Illuminate\View\Middleware\ShareErrorsFromSession::class,
             \App\Http\Middleware\VerifyCsrfToken::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
-            \App\Http\Middleware\CheckLanguage::class,
-            \App\Http\Middleware\Localization::class, // Our localization middleware
         ],
+
         'api' => [
-            'throttle:1000,1',
-            'bindings',
+            'throttle:60,1',
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
     ];
 
@@ -47,32 +52,15 @@ class Kernel extends HttpKernel
      * @var array
      */
     protected $routeMiddleware = [
-		'accesspage' => \App\Http\Middleware\CheckAccessPage::class,
-        'account' => \App\Http\Middleware\RedirectIfNotAccount::class,
-        'account.guest' => \App\Http\Middleware\RedirectIfAccount::class,
-        'fleet' => \App\Http\Middleware\RedirectIfNotFleet::class,
-        'fleet.guest' => \App\Http\Middleware\RedirectIfFleet::class,
-        'dispatcher' => \App\Http\Middleware\RedirectIfNotDispatcher::class,
-        'dispatcher.guest' => \App\Http\Middleware\RedirectIfDispatcher::class,
-        'provider' => \App\Http\Middleware\RedirectIfNotProvider::class,
-        'crm' => \App\Http\Middleware\RedirectIfNotCrm::class,
-        'crm.guest' => \App\Http\Middleware\RedirectIfCrm::class,
-        'cms' => \App\Http\Middleware\RedirectIfNotCms::class,
-        'cms.guest' => \App\Http\Middleware\RedirectIfCms::class,
-        'provider.guest' => \App\Http\Middleware\RedirectIfProvider::class,
-        'provider.api' => \App\Http\Middleware\ProviderApiMiddleware::class,
-        'admin' => \App\Http\Middleware\RedirectIfNotAdmin::class,
-        'admin.guest' => \App\Http\Middleware\RedirectIfAdmin::class,
-        'auth' => \Illuminate\Auth\Middleware\Authenticate::class,
+        'auth' => \App\Http\Middleware\Authenticate::class,
         'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
         'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
         'can' => \Illuminate\Auth\Middleware\Authorize::class,
-        'support' => \App\Http\Middleware\RedirectIfNotSupport::class,
-        'support.guest' => \App\Http\Middleware\RedirectIfSupport::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+        'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
+        'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-        'jwt.auth' => 'Tymon\JWTAuth\Middleware\GetUserFromToken',
-        'jwt.refresh' => 'Tymon\JWTAuth\Middleware\RefreshToken',
-		
+        'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
     ];
 }
